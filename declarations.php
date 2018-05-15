@@ -12,11 +12,6 @@ $builder->useAutowiring(true);
 $builder->ignorePhpDocErrors(true);
 
 $builder->addDefinitions([
-    'renderer.engine' => function($container) {
-        return (new League\Plates\Engine($container->get('renderer.dir'), $container->get('renderer.ext')));
-    },
-    'renderer.dir' => PROJECT_FOLDER . '/templates',
-    'renderer.ext' => 'php',
     'base_path' => function() {
         return (empty($_SERVER['Sherpa_BASE'])) ? '' : $_SERVER['Sherpa_BASE'];
     },
@@ -37,7 +32,6 @@ $app->delayed(function(Sherpa\App\App $app) {
     $app->add(new \Middlewares\AuraRouter($app->getRouter()), 100);
     $app->add(new \Middlewares\BasePath($app->get('base_path')), 1000);
     $app->add(new \Sherpa\Middlewares\RequestInjector($app), 10);
-    $app->add(new \Sherpa\Middlewares\PlatesRenderer($app->get('renderer.engine')), 10);
     $app->add(new \Sherpa\Middlewares\RequestHandler($app->getContainer()));
 
     if ($app->isDebug()) {
