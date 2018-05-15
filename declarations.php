@@ -27,7 +27,7 @@ $builder->addDefinitions([
 ]);
 
 
-$app->delayed(function(Sherpa\App\App $app) {
+$app->delayed(function(Sherpa\Kernel\Kernel $app) {
 
     $app->add(new \Middlewares\ErrorHandler(new CustomizableErrorHandler($app)), 10000);
     $app->add(new \Sherpa\Middlewares\PhpSession(), 500);
