@@ -14,7 +14,6 @@ class App extends Kernel
 {
     use \Sherpa\Traits\RouteTrait;
     use \Sherpa\Traits\ErrorHandleTrait;
-    use \Sherpa\Traits\RendererTrait;
     use \Sherpa\Traits\RequestHelperTrait;
 
     protected $router;
