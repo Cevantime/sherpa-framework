@@ -11,6 +11,8 @@ $builder = $app->getContainerBuilder();
 $builder->useAutowiring(true);
 $builder->ignorePhpDocErrors(true);
 
+$appClass = get_class($app);
+
 $builder->addDefinitions([
     'base_path' => function() {
         return (empty($_SERVER['Sherpa_BASE'])) ? '' : $_SERVER['Sherpa_BASE'];
@@ -21,7 +23,7 @@ $builder->addDefinitions([
     'response.emitter' => function() {
         return new SapiEmitter();
     },
-    Sherpa\App\App::class => $app
+    $appClass => $app
 ]);
 
 
