@@ -1,6 +1,7 @@
 {
     "name": "cevantime/sherpa-framework",
     "description": "The Sherpa Framework",
+    "license": "MIT",
     "require": {
         "php": ">=7.1",
         "monolog/monolog": "^1.23",
