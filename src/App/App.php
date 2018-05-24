@@ -3,7 +3,12 @@
 namespace Sherpa\App;
 
 use Aura\Router\RouterContainer;
+use Sherpa\Declaration\DeclarationInterface;
+use Sherpa\Exception\InvalidDeclarationClassException;
 use Sherpa\Kernel\Kernel;
+use Sherpa\Traits\ErrorHandleTrait;
+use Sherpa\Traits\RequestHelperTrait;
+use Sherpa\Traits\RouteTrait;
 
 /**
  * Description of App
@@ -12,9 +17,9 @@ use Sherpa\Kernel\Kernel;
  */
 class App extends Kernel
 {
-    use \Sherpa\Traits\RouteTrait;
-    use \Sherpa\Traits\ErrorHandleTrait;
-    use \Sherpa\Traits\RequestHelperTrait;
+    use RouteTrait;
+    use ErrorHandleTrait;
+    use RequestHelperTrait;
 
     protected $router;
     protected $isDebug;
@@ -47,4 +52,14 @@ class App extends Kernel
         $this->isDebug = $isDebug;
     }
 
+    function addDeclaration($declarationClass)
+    {
+        $declaration = $declarationClass();
+        
+        if($declaration instanceof DeclarationInterface){
+            $declaration->register($this);
+        } else {
+            throw new InvalidDeclarationClassException();
+        }
+    }
 }
