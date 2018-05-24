@@ -2,6 +2,7 @@
 
 namespace Sherpa;
 
+use Sherpa\App\App;
 use Sherpa\ErrorHandler\CustomizableErrorHandler;
 use Sherpa\Debug\DebugBar;
 use Zend\Diactoros\Response\SapiEmitter;
@@ -10,7 +11,7 @@ use Sherpa\Declaration\DeclarationInterface;
 class FrameworkDeclarations implements DeclarationInterface
 {
 
-    public function register(App\App $app)
+    public function register(App $app)
     {
 
         $builder = $app->getContainerBuilder();
@@ -34,7 +35,7 @@ class FrameworkDeclarations implements DeclarationInterface
         ]);
 
 
-        $app->delayed(function(Sherpa\Kernel\Kernel $app) {
+        $app->delayed(function(\Sherpa\Kernel\Kernel $app) {
 
             $app->add(new \Middlewares\ErrorHandler(new CustomizableErrorHandler($app)), 10000);
             $app->add(new \Sherpa\Middlewares\PhpSession(), 500);
