@@ -54,7 +54,7 @@ class App extends Kernel
 
     function addDeclaration($declarationClass)
     {
-        $declaration = $declarationClass();
+        $declaration = new $declarationClass();
         
         if($declaration instanceof DeclarationInterface){
             $declaration->register($this);
