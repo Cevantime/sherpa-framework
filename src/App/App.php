@@ -62,4 +62,15 @@ class App extends Kernel
             throw new InvalidDeclarationClassException();
         }
     }
+    
+    function addDeclarations($declarationClasses)
+    {
+        if(is_array($declarationClasses)){
+            foreach ($declarationClasses as $declarationClass) {
+                $this->addDeclaration($declarationClass);
+            }
+        } else {
+            $this->addDeclaration($declarationClass);
+        }
+    }
 }
