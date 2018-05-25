@@ -14,7 +14,7 @@
         "middlewares/trailing-slash": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~7.0"
+        "codeception/codeception": "2.4.x-dev"
     },
     "authors": [
         {

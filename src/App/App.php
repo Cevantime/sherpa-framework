@@ -2,13 +2,16 @@
 
 namespace Sherpa\App;
 
+use Aura\Router\Map;
 use Aura\Router\RouterContainer;
 use Sherpa\Declaration\DeclarationInterface;
 use Sherpa\Exception\InvalidDeclarationClassException;
+use Sherpa\FrameworkDeclarations;
 use Sherpa\Kernel\Kernel;
 use Sherpa\Traits\ErrorHandleTrait;
 use Sherpa\Traits\RequestHelperTrait;
 use Sherpa\Traits\RouteTrait;
+use Zend\Diactoros\ServerRequestFactory;
 
 /**
  * Description of App
@@ -17,6 +20,7 @@ use Sherpa\Traits\RouteTrait;
  */
 class App extends Kernel
 {
+
     use RouteTrait;
     use ErrorHandleTrait;
     use RequestHelperTrait;
@@ -30,18 +34,36 @@ class App extends Kernel
         $this->router = new RouterContainer();
         $this->storage['router'] = $this->router;
         $this->isDebug = $isDebug;
+        $this->addDeclaration(FrameworkDeclarations::class);
     }
 
+    public function bootstrap()
+    {
+        $request = ServerRequestFactory::fromGlobals();
+        $response = $this->handle($request);
+        $emitter = $this->get('response.emitter');
+        $emitter->emit($response);
+        $this->terminate();
+    }
+
+    /**
+     * 
+     * @return RouterContainer
+     */
     public function getRouter()
     {
         return $this->router;
     }
 
+    /**
+     * 
+     * @return Map
+     */
     public function getRouterMap()
     {
         return $this->router->getMap();
     }
-    
+
     function isDebug()
     {
         return $this->isDebug;
@@ -55,17 +77,17 @@ class App extends Kernel
     function addDeclaration($declarationClass)
     {
         $declaration = new $declarationClass();
-        
-        if($declaration instanceof DeclarationInterface){
+
+        if ($declaration instanceof DeclarationInterface) {
             $declaration->register($this);
         } else {
             throw new InvalidDeclarationClassException();
         }
     }
-    
+
     function addDeclarations($declarationClasses)
     {
-        if(is_array($declarationClasses)){
+        if (is_array($declarationClasses)) {
             foreach ($declarationClasses as $declarationClass) {
                 $this->addDeclaration($declarationClass);
             }
@@ -73,4 +95,5 @@ class App extends Kernel
             $this->addDeclaration($declarationClass);
         }
     }
+
 }
