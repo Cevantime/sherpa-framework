@@ -31,7 +31,8 @@ class FrameworkDeclarations implements DeclarationInterface
             'response.emitter' => function() {
                 return new SapiEmitter();
             },
-            $appClass => $app
+            App::class => $app,
+            $appClass => \DI\get(App::class)
         ]);
 
 
