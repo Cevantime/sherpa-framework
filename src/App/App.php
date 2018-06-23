@@ -71,7 +71,11 @@ class App extends Kernel
 
     function setDebug($isDebug)
     {
-        $this->isDebug = $isDebug;
+        if($isDebug && !$this->isDebug) {
+            ini_set('display_errors', 1);
+            error_reporting(E_ALL);
+            $this->isDebug = $isDebug;
+        }
     }
 
     function addDeclaration($declarationClass)

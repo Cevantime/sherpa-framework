@@ -7,6 +7,8 @@ require __DIR__.'/../../vendor/autoload.php';
     
 $app = new App();
 
+//$app->setDebug(true);
+
 $routerMap = $app->getRouterMap();
 
 $routerMap->get('home', '/', function(){

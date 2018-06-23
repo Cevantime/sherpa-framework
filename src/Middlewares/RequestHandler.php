@@ -3,8 +3,7 @@
 
 namespace Sherpa\Middlewares;
 
-use DI\Container;
-use Psr\Container\ContainerInterface;
+use Invoker\InvokerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -18,9 +17,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 class RequestHandler implements MiddlewareInterface
 {
     /**
-     * @var ContainerInterface Used to resolve the handlers
+     * @var InvokerInterface Used to resolve the handlers
      */
-    private $diContainer;
+    private $invoker;
 
     /**
      * @var string Attribute name for handler reference
@@ -30,9 +29,9 @@ class RequestHandler implements MiddlewareInterface
     /**
      * Set the resolver instance.
      */
-    public function __construct(Container $diContainer)
+    public function __construct(InvokerInterface $invoker = null)
     {
-        $this->diContainer = $diContainer;
+        $this->invoker = $invoker;
     }
 
     /**
@@ -57,9 +56,18 @@ class RequestHandler implements MiddlewareInterface
             return $requestHandler->handle($request);
         }
         
-        return $this->diContainer->call($requestHandler, $request->getAttributes());
+        if($this->invoker !== null) {
+            return $this->invoker->call($requestHandler, $request->getAttributes());
+        } else {
+            throw new \RuntimeException(sprintf('Unusual request handler: % and no invoker provided.', $this->getType($requestHandler)));
+        } 
         
-//        throw new \RuntimeException(sprintf('Invalid request handler: %s', gettype($requestHandler)));
+        throw new \RuntimeException(sprintf('Invalid request handler: %s.', $this->getType($requestHandler)));
+    }
+    
+    private function getType($var)
+    {
+        return is_object($var) ? get_class($var) : gettype($var);
     }
 
 }

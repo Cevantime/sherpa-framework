@@ -38,11 +38,11 @@ class FrameworkDeclarations implements DeclarationInterface
 
         $app->delayed(function(\Sherpa\Kernel\Kernel $app) {
 
-            $app->add(new \Middlewares\ErrorHandler(new CustomizableErrorHandler($app)), 10000);
+            $app->add(new \Middlewares\ErrorHandler($app->get('error.handler')), 10000);
             $app->add(new \Sherpa\Middlewares\PhpSession(), 500);
             $app->add(new \Middlewares\AuraRouter($app->getRouter()), 100);
             $app->add(new \Middlewares\BasePath($app->get('base_path')), 1000);
-            $app->add(new \Sherpa\Middlewares\RequestInjector($app), 10);
+            $app->add(new \Sherpa\Middlewares\RequestInjector($app->getContainer()), 10);
             $app->add(new \Sherpa\Middlewares\RequestHandler($app->getContainer()));
 
             if ($app->isDebug()) {

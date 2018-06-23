@@ -9,9 +9,9 @@ namespace Sherpa\Debug;
  */
 class DebugBar extends \DebugBar\StandardDebugBar
 {
-    public function __construct($app)
+    public function __construct($basePath)
     {
         parent::__construct();
-        $this->jsRenderer = new \DebugBar\JavascriptRenderer($this, 'debugbar', $app->get('base_path'));
+        $this->jsRenderer = new \DebugBar\JavascriptRenderer($this, 'debugbar', $basePath);
     }
 }
