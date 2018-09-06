@@ -8,7 +8,6 @@
         "cevantime/sherpa-core": "@dev",
         "middlewares/aura-router": "^1.0",
         "middlewares/error-handler": "^1.0",
-        "middlewares/debugbar": "^1.0",
         "middlewares/php-session": "^1.0",
         "middlewares/base-path": "^1.0",
         "middlewares/trailing-slash": "^1.0"
