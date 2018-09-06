@@ -22,8 +22,10 @@ class FrameworkDeclarations implements DeclarationInterface
         $appClass = get_class($app);
 
         $builder->addDefinitions([
-            'base_path' => function() {
-                return (empty($_SERVER['Sherpa_BASE'])) ? '' : $_SERVER['Sherpa_BASE'];
+            'base_path' => function(\DI\Container $container) {
+                $originalRequest = $container->get('original_request');
+                $serverParams = $originalRequest->getServerParams();
+                return $serverParams['Sherpa_BASE'] ?: '';
             },
             'error.handler' => function() {
                 return new \Middlewares\ErrorHandlerDefault();
