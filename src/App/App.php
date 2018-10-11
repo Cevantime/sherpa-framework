@@ -7,7 +7,7 @@ use Aura\Router\RouterContainer;
 use Sherpa\Declaration\Declaration;
 use Sherpa\Declaration\DeclarationInterface;
 use Sherpa\Exception\InvalidDeclarationClassException;
-use Sherpa\FrameworkDeclarations;
+use Sherpa\FrameworkDeclaration;
 use Sherpa\Kernel\Kernel;
 use Sherpa\Traits\ErrorHandleTrait;
 use Sherpa\Traits\RequestHelperTrait;
@@ -35,7 +35,7 @@ class App extends Kernel
         $this->router = new RouterContainer();
         $this->storage['router'] = $this->router;
         $this->setDebug($isDebug);
-        $this->addDeclaration(FrameworkDeclarations::class);
+        $this->addDeclaration(FrameworkDeclaration::class);
     }
 
     public function bootstrap()
@@ -65,12 +65,12 @@ class App extends Kernel
         return $this->router->getMap();
     }
 
-    function isDebug()
+    public function isDebug()
     {
         return $this->isDebug;
     }
 
-    function setDebug($isDebug)
+    public function setDebug($isDebug)
     {
         $this->set('debug', $isDebug);
         if ($isDebug && !$this->isDebug) {
@@ -80,7 +80,7 @@ class App extends Kernel
         }
     }
 
-    function addDeclaration($declarationClass)
+    public function addDeclaration($declarationClass)
     {
         $declaration = new $declarationClass();
 
@@ -98,15 +98,14 @@ class App extends Kernel
         }
     }
 
-    function addDeclarations($declarationClasses)
+    public function addDeclarations($declarationClasses)
     {
         if (is_array($declarationClasses)) {
             foreach ($declarationClasses as $declarationClass) {
                 $this->addDeclaration($declarationClass);
             }
         } else {
-            $this->addDeclaration($declarationClass);
+            $this->addDeclaration($declarationClasses);
         }
     }
-
 }

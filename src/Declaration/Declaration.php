@@ -12,7 +12,7 @@ use Sherpa\App\App;
  *
  * @author cevantime
  */
-class Declaration
+class Declaration implements DeclarationInterface
 {
     public function routes(Map $map)
     {
@@ -32,5 +32,22 @@ class Declaration
     public function declarations(App $app)
     {
         
+    }
+
+    public function register(App $app)
+    {
+        $this->declarations($app);
+        $this->definitions($app->getContainerBuilder());
+
+        $map = $app->getRouterMap();
+
+        if( ! $map->isCached()) {
+            $this->routes($app->getRouterMap());
+        }
+
+        $self = $this;
+        $app->delayed(function(App $app) use ($self) {
+            $self->delayed($app);
+        });
     }
 }
