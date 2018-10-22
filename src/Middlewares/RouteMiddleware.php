@@ -41,6 +41,9 @@ class RouteMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $route = $request->getAttribute('_route');
+        if( ! $route) {
+            return $handler->handle($request);
+        }
         /* @var \Sherpa\Routing\Route $route */
         $callables = $route->getMiddlewares();
         $callables[] = new MiddlewareDelegator($handler);

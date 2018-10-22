@@ -79,7 +79,7 @@ class App extends Kernel
      */
     public function getMap()
     {
-        return $this->router->getMap();
+        return $this->getRouter()->getMap();
     }
 
     public function isDebug()
