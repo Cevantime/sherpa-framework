@@ -11,8 +11,28 @@ namespace Sherpa\Routing;
 
 class Route extends \Aura\Router\Route
 {
+    protected $middlewares = [];
+
     public function getNamePrefix()
     {
         return $this->namePrefix;
+    }
+
+    public function pipe($middleware)
+    {
+        $this->middlewares[] = $middleware;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMiddlewares(): array
+    {
+        return $this->middlewares;
+    }
+
+    public function unpipe()
+    {
+        $this->middlewares = [];
     }
 }

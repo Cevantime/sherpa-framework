@@ -3,7 +3,7 @@
 
 namespace Sherpa\Middlewares;
 
-use Invoker\InvokerInterface;
+use DI\InvokerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -28,8 +28,9 @@ class RequestHandler implements MiddlewareInterface
 
     /**
      * Set the resolver instance.
+     * @param InvokerInterface|null $invoker
      */
-    public function __construct(InvokerInterface $invoker = null)
+    public function __construct(InvokerInterface $invoker)
     {
         $this->invoker = $invoker;
     }

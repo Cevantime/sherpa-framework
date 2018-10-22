@@ -11,19 +11,19 @@ use Zend\Diactoros\Response\RedirectResponse;
  */
 trait RouteTrait
 {
-    public function redirectToRoute($routeName, $params = array())
+    public function redirectToRoute($routeName, $params = [], $status = 302, $header = [])
     {
-        return $this->redirectTo($this->path($routeName, $params));
+        return $this->redirectTo($this->path($routeName, $params), $status, $header);
     }
     
-    public function redirectTo($path)
+    public function redirectTo($path, $status = 302, $header = [])
     {
-        return new RedirectResponse($path);
+        return new RedirectResponse($path, $status, $header);
     }
     
     public function path($routeName, $params = array())
     {
-        return $this->getRouter()->getGenerator()->generate($routeName, $params);
+        return $this->container->get('router')->getGenerator()->generate($routeName, $params);
     }
     
 }

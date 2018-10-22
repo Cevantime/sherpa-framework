@@ -2,10 +2,9 @@
 
 namespace Sherpa\Declaration;
 
-use Aura\Router\Map;
-use DI\Container;
 use DI\ContainerBuilder;
 use Sherpa\App\App;
+use Sherpa\Routing\Map;
 
 /**
  * Description of AbstractDeclaration
@@ -29,20 +28,20 @@ class Declaration implements DeclarationInterface
         
     }
     
-    public function declarations(App $app)
+    public function custom(App $app)
     {
         
     }
 
     public function register(App $app)
     {
-        $this->declarations($app);
+        $this->custom($app);
         $this->definitions($app->getContainerBuilder());
 
-        $map = $app->getRouterMap();
+        $map = $app->getMap();
 
         if( ! $map->isCached()) {
-            $this->routes($app->getRouterMap());
+            $this->routes($app->getMap());
         }
 
         $self = $this;

@@ -30,7 +30,7 @@ class CacheRouteDeclaration implements DeclarationInterface
                 $map->setRoutes($routes);
                 $map->setCached(true);
             }
-            $app->add(function(ServerRequestInterface $request, RequestHandlerInterface $handler) use ($cache, $map, $cacheKey) {
+            $app->pipe(function(ServerRequestInterface $request, RequestHandlerInterface $handler) use ($cache, $map, $cacheKey) {
                 $routes = $map->getRoutes();
                 $cache->save($cacheKey, $routes);
                 return $handler->handle($request);
