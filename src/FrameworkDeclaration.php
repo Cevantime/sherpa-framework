@@ -3,6 +3,7 @@
 namespace Sherpa;
 
 use function DI\get;
+use function DI\string;
 use Doctrine\Common\Cache\ApcuCache;
 use Middlewares\ErrorHandler;
 use Middlewares\ErrorHandlerDefault;
@@ -46,16 +47,14 @@ class FrameworkDeclaration implements DeclarationInterface
             $appClass => get(App::class)
         ]);
 
-        $app->set('namespace', 'App\\');
-        $app->set('projectDir', realpath('..'));
-        $app->set('projectSrc', function(\DI\Container $container) {
-            return $container->get('projectDir') . '/src';
-        });
+        $app->set('project.namespace', 'App\\');
+        $app->set('project.root', realpath('..'));
+        $app->set('project.src', string('{project.root}/src'));
 
-        $app->pipe(RequestInjector::class, 2);
         $app->pipe(RouteMiddleware::class, 1);
         $app->pipe(RequestHandler::class, 0);
         $app->pipe(PhpSession::class, 500);
+        $app->pipe(RequestInjector::class, 0, RequestHandler::class);
 
         $app->delayed(function(Kernel $app) {
             $app->pipe(new ErrorHandler($app->get('error.handler')), 10000);

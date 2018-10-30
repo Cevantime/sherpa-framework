@@ -5,13 +5,13 @@
     "require": {
         "php": ">=7.1",
         "monolog/monolog": "^1.23",
-        "cevantime/sherpa-core": "@dev",
+        "cevantime/sherpa-core": "0.0.1",
         "middlewares/aura-router": "^1.0",
         "middlewares/error-handler": "^1.0",
         "middlewares/php-session": "^1.0",
         "middlewares/base-path": "^1.0",
         "middlewares/trailing-slash": "^1.0",
-        "doctrine/common": "^2.9@dev",
+        "doctrine/common": "^2.9@dev"
     },
     "require-dev": {
         "codeception/codeception": "2.4.x-dev"

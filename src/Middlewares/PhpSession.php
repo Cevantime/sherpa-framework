@@ -62,7 +62,7 @@ class PhpSession implements MiddlewareInterface
     {
         self::checkSessionCanStart();
 
-        if (session_status() === PHP_SESSION_ACTIVE) {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
             
             //Session name
             $name = $this->name ?: session_name();
@@ -89,7 +89,6 @@ class PhpSession implements MiddlewareInterface
                 session_start($this->options);
             }
         }
-        
 
         $response = $handler->handle($request);
 
