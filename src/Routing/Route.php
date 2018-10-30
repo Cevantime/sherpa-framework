@@ -13,6 +13,14 @@ class Route extends \Aura\Router\Route
 {
     protected $middlewares = [];
 
+    public function __clone()
+    {
+        parent::__clone();
+        $this->attributes([
+            '_route' => $this
+        ]);
+    }
+
     public function getNamePrefix()
     {
         return $this->namePrefix;

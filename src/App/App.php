@@ -90,10 +90,10 @@ class App extends Kernel
     public function setDebug($isDebug)
     {
         $this->set('debug', $isDebug);
-        if ($isDebug && !$this->isDebug) {
+        $this->isDebug = $isDebug;
+        if ($isDebug) {
             ini_set('display_errors', 1);
             error_reporting(E_ALL);
-            $this->isDebug = $isDebug;
         }
     }
 

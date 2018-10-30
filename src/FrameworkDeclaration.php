@@ -25,10 +25,9 @@ class FrameworkDeclaration implements DeclarationInterface
     {
 
         $builder = $app->getContainerBuilder();
-        $cache = new ApcuCache();
-
         if( ! $app->isDebug()) {
-            $builder->setDefinitionCache($cache);
+            $builder->enableDefinitionCache();
+            $builder->enableCompilation('../var/cache');
         }
 
         $builder->useAutowiring(true);
@@ -50,8 +49,9 @@ class FrameworkDeclaration implements DeclarationInterface
         $app->set('project.namespace', 'App\\');
         $app->set('project.root', realpath('..'));
         $app->set('project.src', string('{project.root}/src'));
+        $app->set('project.cache', string('{project.root}/var/cache'));
 
-        $app->pipe(RouteMiddleware::class, 1);
+        $app->pipe(RouteMiddleware::class);
         $app->pipe(RequestHandler::class, 0);
         $app->pipe(PhpSession::class, 500);
         $app->pipe(RequestInjector::class, 0, RequestHandler::class);

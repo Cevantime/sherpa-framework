@@ -76,4 +76,12 @@ class Map extends \Aura\Router\Map
     {
         $this->isCached = $isCached;
     }
+
+    public function __clone()
+    {
+        parent::__clone();
+        $this->attributes([
+            '_route' => $this
+        ]);
+    }
 }

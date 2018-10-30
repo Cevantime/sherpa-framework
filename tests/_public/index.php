@@ -5,9 +5,7 @@ use Zend\Diactoros\Response\HtmlResponse;
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-$app = new App();
-
-//$app->setDebug(true);
+$app = new App(true);
 
 $routerMap = $app->getMap();
 
@@ -17,9 +15,10 @@ $routerMap->get('home', '/', function () {
 
 $routerMap->get('middleware', '/middleware', function () {
     return new HtmlResponse("Hello middleware");
-})->with(function(\Psr\Http\Message\ServerRequestInterface $request, \Psr\Http\Server\RequestHandlerInterface $handler){
+})->pipe(function(\Psr\Http\Message\ServerRequestInterface $request, \Psr\Http\Server\RequestHandlerInterface $handler){
     $response = $handler->handle($request);
-    $response->getBody()->write('I hacked you !!');
+    $response->getBody()->write($response->getBody() . ' I hacked you !!');
+    return $response;
 });
 
 $app->bootstrap();
