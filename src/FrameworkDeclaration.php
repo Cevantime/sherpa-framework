@@ -5,11 +5,11 @@ namespace Sherpa;
 use function DI\get;
 use function DI\string;
 use Doctrine\Common\Cache\ApcuCache;
-use Middlewares\ErrorHandler;
 use Middlewares\ErrorHandlerDefault;
 use Sherpa\App\App;
 use Sherpa\Declaration\DeclarationInterface;
 use Sherpa\Kernel\Kernel;
+use Sherpa\Middlewares\ErrorHandler;
 use Sherpa\Middlewares\PhpSession;
 use Sherpa\Middlewares\RequestHandler;
 use Sherpa\Middlewares\RequestInjector;
@@ -51,13 +51,15 @@ class FrameworkDeclaration implements DeclarationInterface
         $app->set('project.src', string('{project.root}/src'));
         $app->set('project.cache', string('{project.root}/var/cache'));
 
-        $app->pipe(RouteMiddleware::class);
+        $app->pipe(RouteMiddleware::class, 99);
         $app->pipe(RequestHandler::class, 0);
         $app->pipe(PhpSession::class, 500);
         $app->pipe(RequestInjector::class, 0, RequestHandler::class);
 
         $app->delayed(function(Kernel $app) {
-            $app->pipe(new ErrorHandler($app->get('error.handler')), 10000);
+            $errorHandler = new ErrorHandler($app->get('error.handler'));
+            $errorHandler->catchExceptions(!$app->get('debug'));
+            $app->pipe($errorHandler, 10000);
             $app->pipe(new \Middlewares\AuraRouter($app->getRouter()), 100);
         });
     }

@@ -26,9 +26,13 @@ class Route extends \Aura\Router\Route
         return $this->namePrefix;
     }
 
-    public function pipe($middleware)
+    public function pipe($middleware, ?int $priority = 1, ?string $before = null)
     {
-        $this->middlewares[] = $middleware;
+        $this->middlewares[] = [
+            'middleware' => $middleware,
+            'priority' => $priority,
+            'before' => $before
+        ];
     }
 
     /**
