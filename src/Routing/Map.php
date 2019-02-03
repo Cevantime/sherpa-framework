@@ -10,10 +10,42 @@ namespace Sherpa\Routing;
 
 
 use Aura\Router\Exception\RouteNotFound;
+use Aura\Router\Route;
 
 class Map extends \Aura\Router\Map
 {
     protected $isCached = false;
+    protected $originalRoute;
+
+    public function __construct(Route $protoRoute)
+    {
+        parent::__construct($protoRoute);
+        $this->originalRoute = $protoRoute;
+    }
+
+    /**
+     * @return Route
+     */
+    public function getProtoRoute(): Route
+    {
+        return $this->protoRoute;
+    }
+
+    /**
+     * @param Route $protoRoute
+     */
+    public function setProtoRoute(Route $protoRoute): void
+    {
+        $this->protoRoute = $protoRoute;
+    }
+
+    /**
+     * @return Route
+     */
+    public function getOriginalRoute(): Route
+    {
+        return $this->originalRoute;
+    }
 
     public function getRoute($name)
     {
@@ -22,6 +54,11 @@ class Map extends \Aura\Router\Map
         }
 
         return $this->routes[$this->protoRoute->getNamePrefix() . $name];
+    }
+
+    public function reset()
+    {
+        $this->protoRoute = $this->originalRoute;
     }
 
     /**
@@ -38,5 +75,13 @@ class Map extends \Aura\Router\Map
     public function setCached(bool $isCached): void
     {
         $this->isCached = $isCached;
+    }
+
+    public function __clone()
+    {
+        parent::__clone();
+        $this->attributes([
+            '_route' => $this
+        ]);
     }
 }

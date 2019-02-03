@@ -28,8 +28,9 @@ class RequestHandler implements MiddlewareInterface
 
     /**
      * Set the resolver instance.
+     * @param InvokerInterface|null $invoker
      */
-    public function __construct(InvokerInterface $invoker = null)
+    public function __construct(InvokerInterface $invoker)
     {
         $this->invoker = $invoker;
     }

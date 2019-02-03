@@ -2,13 +2,14 @@
 
 namespace Sherpa\App;
 
-use Aura\Router\Map;
 use Aura\Router\RouterContainer;
 use Sherpa\Declaration\Declaration;
 use Sherpa\Declaration\DeclarationInterface;
 use Sherpa\Exception\InvalidDeclarationClassException;
 use Sherpa\FrameworkDeclaration;
 use Sherpa\Kernel\Kernel;
+use Sherpa\Routing\Map;
+use Sherpa\Routing\Route;
 use Sherpa\Traits\ErrorHandleTrait;
 use Sherpa\Traits\RequestHelperTrait;
 use Sherpa\Traits\RouteTrait;
@@ -28,19 +29,24 @@ class App extends Kernel
 
     protected $router;
     protected $isDebug;
+    protected $declarations = [];
 
     public function __construct($isDebug = false)
     {
         parent::__construct();
-        $this->router = new RouterContainer();
-        $this->storage['router'] = $this->router;
+
+        $this->set('router', $this->router);
         $this->setDebug($isDebug);
+
+        $this->set('base_path', $_SERVER['Sherpa_BASE'] ?? '');
+
         $this->addDeclaration(FrameworkDeclaration::class);
     }
 
     public function bootstrap()
     {
         $request = ServerRequestFactory::fromGlobals();
+        $this->getRouter(); // initialize router if not provided
         $response = $this->handle($request);
         $emitter = $this->get('response.emitter');
         $emitter->emit($response);
@@ -53,16 +59,27 @@ class App extends Kernel
      */
     public function getRouter()
     {
+        if ($this->router === null) {
+            $this->router = new RouterContainer($this->get('base_path'));
+
+            $this->router->setMapFactory(function () {
+                return new Map(new Route());
+            });
+            $this->router->setRouteFactory(function () {
+                return new Route();
+            });
+            $this->set('router', $this->router);
+        }
         return $this->router;
     }
 
     /**
      *
-     * @return Map
+     * @return \Sherpa\Routing\Map
      */
-    public function getRouterMap()
+    public function getMap()
     {
-        return $this->router->getMap();
+        return $this->getRouter()->getMap();
     }
 
     public function isDebug()
@@ -73,28 +90,34 @@ class App extends Kernel
     public function setDebug($isDebug)
     {
         $this->set('debug', $isDebug);
-        if ($isDebug && !$this->isDebug) {
+        $this->isDebug = $isDebug;
+        if ($isDebug) {
             ini_set('display_errors', 1);
             error_reporting(E_ALL);
-            $this->isDebug = $isDebug;
         }
     }
 
     public function addDeclaration($declarationClass)
     {
+        if (isset($this->declarations[$declarationClass])) {
+            return;
+        }
+
         $declaration = new $declarationClass();
 
         if ($declaration instanceof DeclarationInterface) {
+            if ($this->router !== null) {
+                $map = $this->getMap();
+                $currentRoute = $map->getProtoRoute();
+                $map->reset();
+            }
             $declaration->register($this);
-        } else if ($declaration instanceof Declaration) {
-            $declaration->declarations($this);
-            $declaration->definitions($this->getContainerBuilder());
-//            if ($this->isDebug()) {
-                $declaration->routes($this->getRouterMap());
-//            }
-            $this->delayed([$declaration, 'delayed']);
+            $this->declarations[$declarationClass] = $declaration;
+            if (isset($map) && isset($currentRoute)) {
+                $map->setProtoRoute($currentRoute);
+            }
         } else {
-            throw new InvalidDeclarationClassException();
+            throw new InvalidDeclarationClassException($declarationClass);
         }
     }
 
